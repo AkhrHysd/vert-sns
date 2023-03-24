@@ -76,13 +76,16 @@ contract VerticalSNS {
         return users[child].trees[parentUniqueId].children.length;
     }
     function isConnected(address parent, address child) public view returns (bool) {
-        Tree storage tree = users[child].trees[parent];
+        bytes32 parentId = users[parent].uniqueId;
+        Tree storage tree = users[child].trees[parentId];
         return tree.parent.length > 0;
     }
 
     function _removeConnection(address parent, address child) internal {
+        bytes32 parentId = users[parent].uniqueId;
+        bytes32 childId = users[child].uniqueId;
         // 親ユーザーから子ユーザーを削除
-        Tree storage parentTree = users[parent].trees[child];
+        Tree storage parentTree = users[parent].trees[childId];
         for (uint i = 0; i < parentTree.children.length; i++) {
             if (parentTree.children[i] == child) {
                 parentTree.children[i] = parentTree.children[parentTree.children.length - 1];
@@ -92,7 +95,7 @@ contract VerticalSNS {
         }
 
         // 子ユーザーから親ユーザーを削除
-        Tree storage childTree = users[child].trees[parent];
+        Tree storage childTree = users[child].trees[parentId];
         for (uint i = 0; i < childTree.parent.length; i++) {
             if (childTree.parent[i] == parent) {
                 childTree.parent[i] = childTree.parent[childTree.parent.length - 1];
