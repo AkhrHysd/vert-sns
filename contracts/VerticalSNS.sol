@@ -19,6 +19,10 @@ contract VerticalSNS {
         users[msg.sender].uniqueId = uniqueId;
     }
 
+    function getUserUniqueId(address userAddress) public view returns (bytes32) {
+        return users[userAddress].uniqueId;
+    }
+
     function addParent(bytes32 treeId, address parentAddress) public {
         require(users[msg.sender].uniqueId != 0, "User not registered");
         require(users[parentAddress].uniqueId != 0, "Parent user not registered");
@@ -30,9 +34,9 @@ contract VerticalSNS {
         parentTree.children.push(msg.sender);
     }
 
-    function getConnection(address user, bytes32 uniqueId) public view returns (address[] memory parent, address[] memory children) {
+    function getConnection(address user, bytes32 treeId) public view returns (address[] memory parent, address[] memory children) {
         require(users[user].uniqueId != 0, "User not registered");
-        return (users[user].trees[uniqueId].parent, users[user].trees[uniqueId].children);
+        return (users[user].trees[treeId].parent, users[user].trees[treeId].children);
     }
 
     function removeConnection(address parent, address child) public {
