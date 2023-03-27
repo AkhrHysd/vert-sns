@@ -123,9 +123,32 @@ contract("VerticalSNS", (accounts) => {
     })
   })
 
-  contract("getConnection")
+  contract("getConnection", () => {
+    it("ユーザーが親ノードとのコネクションを取得できること", async () => {
+      const parentUniqueId = "parent";
+      const childUniqueId = "child";
+      const hexParentUniqueId = web3.utils.asciiToHex(parentUniqueId).padEnd(66, "0");
+      const hexChildUniqueId = web3.utils.asciiToHex(childUniqueId).padEnd(66, "0");
+
+      await instance.registerUser(hexParentUniqueId, { from: accounts[0] });
+      await instance.registerUser(hexChildUniqueId, { from: accounts[1] });
+      await instance.addParent(hexChildUniqueId, hexParentUniqueId, { from: accounts[1] });
+
+      const connection = await instance.getConnection(hexChildUniqueId);
+      assert.equal(connection, hexParentUniqueId, "Parent connection was not retrieved correctly");
+    });
+  });
 
   contract('removeConnection')
 
-  
+  contract('findChilIndex')
+
+  contract('findParentIndex')
+
+  contract('isConnected')
+
+  contract('_removeConnection')
+
+  contract('removeConnectionFromChild')
+
 });
